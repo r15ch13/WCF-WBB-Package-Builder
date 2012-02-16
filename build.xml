@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU Lesser General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+* 
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU Lesser General Public License for more details.
+* 
+* You should have received a copy of the GNU Lesser General Public License
+* along with this program. If not, see <http://www.gnu.org/licenses/lgpl-3.0>.
+*/
+/**
+ * @author Richard 'r15ch13' Kuhnt <r15ch13@gmail.com>
+ * @copyright Copyright (c) 2012, Richard 'r15ch13' Kuhnt
+ * @license http://www.gnu.org/licenses/lgpl-3.0 GNU Lesser General Public License
+ * @link http://r15ch13.de
+ */
+-->
+<project name="WCF/WBB Package Builder" default="help" basedir=".">
+	<!-- property file="build.properties" /-->
+
+	<property name="build.dir" value="build" />
+	<property name="build.source" value="src" />
+	<property name="build.compress" value="true" />
+
+	<property name="script.version" value="1.0.0" />
+
+	<target name="help" description="Displays the available options">
+		<echo msg="${phing.project.name} ${script.version}" />
+		<echo msg="------------------" />
+		<echo msg="Build options" />
+		<echo msg="------------------" />
+		<echo msg="$ phing clean - Deletes previous build" />
+		<echo msg="$ phing prepare - Creates new build directory" />
+		<echo msg="$ phing build - Create new package" />
+		<echo msg="$ phing help - Displays the available options" />
+		<echo msg="------------------" />
+		<echo msg="Package structure:" />
+		<echo msg="Projectfolder" />
+		<echo msg="|-- build                   # The build package will be saved here ([packagename]_v[version].tar[.gz])" />
+		<echo msg="|-- src" />
+		<echo msg="|   |-- languages           # Language-Files (*.xml)" />
+		<echo msg="|   |-- optionals           # Packages (*.tar | *.tar.gz)" />
+		<echo msg="|   |-- requirements        # Packages (*.tar | *.tar.gz)" />
+		<echo msg="|   |-- sql                 # SQL-Files (*.sql)" />
+		<echo msg="|   |   |-- install.sql" />
+		<echo msg="|   |   `-- update.sql" />
+		<echo msg="|   |-- tar                 # All subfolders will be packed to [foldername].tar" />
+		<echo msg="|   |   |-- acptemplates" />
+		<echo msg="|   |   |-- files" />
+		<echo msg="|   |   |-- templates" />
+		<echo msg="|   |   `-- pip" />
+		<echo msg="|   |-- xml                 # Other XML-Files (*.xml)" />
+		<echo msg="|   `-- package.xml         # Plugin package.xml" />
+		<echo msg="`-- build.xml" />
+	</target>
+
+	<target name="test" depends="load_package_data">
+		<echo msg="${phing.project.name} ${script.version}" />
+		<echo msg="${package.version}" />
+		<echo msg="${package.name}" />
+	</target>
+
+	<target name="prepare" depends="load_package_data" description="Creates new build directory and creates tar archives">
+		<echo msg="Preparing build directory ..." />
+		<mkdir dir="${build.dir}" />
+
+		<echo msg="Creating *.tar archives ..." />
+		<foreach param="foldername" absparam="absfoldername" target="buildtars">
+			<fileset dir=".">
+				<include name="${build.source}/tar/*"/>
+				<exclude name="${build.source}/tar/*.tar"/>
+			</fileset>
+		</foreach>
+	</target>
+
+	<target name="buildtars" description="Creates tar archives for each firstlevel subdirectory">
+		<available file="${foldername}" property="folder.exists" value="1" />
+		<if>
+			<equals arg1="${folder.exists}" arg2="1" />
+			<then>
+				<tar destfile="${foldername}.tar" compression="none">
+					<fileset dir="${foldername}">
+						<include name="*" />
+					</fileset>
+				</tar>
+			</then>
+			<else>
+				<echo msg="${foldername} not found." />
+			</else>
+		</if>
+	</target>
+
+	<target name="clean" depends="load_package_data" description="Deletes previous build">
+		<delete>
+			<fileset dir=".">
+				<include name="${build.source}/tar/*.tar" />
+			</fileset>
+		</delete>
+		<delete file="${build.dir}/${package.name}_v${package.version}.tar.gz" />
+		<delete file="${build.dir}/${package.name}_v${package.version}.tar" />
+	</target>
+
+	<target name="build" depends="load_package_data, prepare">
+		<available file="${build.dir}/${package.name}_v${package.version}.tar.gz" property="file.exists" value="1" />
+		<available file="${build.dir}/${package.name}_v${package.version}.tar" property="file.exists" value="1" />
+		<if>
+			<equals arg1="${file.exists}" arg2="1" />
+			<then>
+				<echo msg="Package with version ${package.version} already exists!" />
+				<input propertyname="package.override" validargs="yes,no" defaultvalue="no">Do you want to override it? </input>
+				<if>
+					<equals arg1="${package.override}" arg2="yes" />
+					<then>
+						<phingcall target="clean" />
+						<phingcall target="realbuild" />
+					</then>
+				</if>
+			</then>
+			<else>
+				<phingcall target="realbuild" />
+			</else>
+		</if>
+	</target>
+
+	<target name="realbuild" depends="load_package_data">
+		<echo msg="${phing.project.name} ${script.version}" />
+		<echo msg="Building ${package.name} ..." />
+
+		<fileset dir="${build.source}" id="package">
+			<include name="languages/*.xml" />
+			<include name="optionals/*.tar" />
+			<include name="optionals/*.tar.gz" />
+			<include name="requirements/*.tar" />
+			<include name="requirements/*.tar.gz" />
+			<include name="sql/*" />
+			<include name="tar/*.tar" />
+			<include name="xml/*" />
+			<include name="package.xml" />
+		</fileset>
+		<if>
+			<equals arg1="${build.compress}" arg2="1" />
+			<then>
+				<echo msg="creating compressed package" />
+				<tar destfile="${build.dir}/${package.name}_v${package.version}.tar.gz" compression="gzip">
+					<fileset refid="package" />
+				</tar>
+			</then>
+			<else>
+				<echo msg="creating uncompressed package" />
+				<tar destfile="${build.dir}/${package.name}_v${package.version}.tar" compression="none">
+					<fileset refid="package" />
+				</tar>
+			</else>
+		</if>
+	</target>
+
+	<!-- Loads package version and name from package.xml and saves them to package.version and package.name properties -->
+	<target name="load_package_data" description="Loads package version and name from package.xml and saves them to package.version and package.name properties">
+		<adhoc-task name="packagedata"><![CDATA[
+			/**
+			 * @author Richard 'r15ch13' Kuhnt <r15ch13@gmail.com>
+			 * @copyright Copyright (c) 2012, Richard 'r15ch13' Kuhnt
+			 * @license http://www.gnu.org/licenses/lgpl-3.0 GNU Lesser General Public License
+			 * @link http://r15ch13.de
+			 */
+			class PackageData extends Task
+			{
+				private $file;
+				private $versionProperty;
+				private $nameProperty;
+				
+				public function setFile($file)
+				{
+					$this->file = $file;
+				}
+
+				public function setVersion($property)
+				{
+					$this->versionProperty = $property;
+				}
+
+				public function setName($property)
+				{
+					$this->nameProperty = $property;
+				}
+
+				private $content;
+
+				public function main()
+				{		
+					// check File
+					if ($this->file === null || strlen($this->file) == 0) {
+						throw new BuildException('You must specify a file containing the package information', $this->location);
+					}
+					$this->content = trim(file_get_contents($this->file));
+					if (strlen($this->content) == 0) {
+						throw new BuildException(sprintf('Supplied file %s is empty', $this->file), $this->location);
+					}
+					if (is_null($this->versionProperty) || strlen($this->versionProperty) === 0) {
+						throw new BuildException('Property for publishing package version is not set', $this->location);
+					}
+					if (is_null($this->nameProperty) || strlen($this->nameProperty) === 0) {
+						throw new BuildException('Property for publishing package name is not set', $this->location);
+					}
+
+					$versionpattern = '/\<version\>(.*)\<\/version\>/i';
+					$namepattern = '/name\="([a-zA-Z0-9\-._]+)".*\>/i';
+
+					$this->project->setProperty($this->versionProperty, $this->usePattern($versionpattern));
+					$this->project->setProperty($this->nameProperty, $this->usePattern($namepattern));
+				}
+
+				public function usePattern($pattern)
+				{
+					$result = array();
+					//$this->log($pattern);
+					if(preg_match($pattern, $this->content, $result) && count($result) == 2)
+					{
+						$data = preg_replace('/[\s]+/', '_', $result[1]);
+						$data = preg_replace('/[^\w\-._]+/', '', $data);
+						$data = strtolower($data);
+						return $data;
+					}
+					else
+					{
+						$this->log("Pattern: ".$pattern);
+						$this->log("Result: ".print_r($result, true));
+						throw new BuildException(sprintf('Result is not matching the regex pattern: %s', $this->file), $this->location);
+					}
+					return "";
+				}
+			}
+		]]></adhoc-task>
+		<packagedata file="${build.source}/package.xml" name="package.name" version="package.version" />
+		<echo msg="Extracted Version: ${package.version}" />
+		<echo msg="Extracted Packagename: ${package.name}" />
+	</target>
+</project>
