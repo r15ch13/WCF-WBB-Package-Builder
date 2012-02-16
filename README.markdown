@@ -11,14 +11,12 @@ Copy the build.xml in your project folder. Be sure all your plugin relevant file
 
 Use your terminal to navigate to the directory with the build.xml and run the following commands:
 
-$ phing clean - Deletes previous build
-
+```
+$ phing clean   - Deletes previous build
 $ phing prepare - Creates new build directory and creates tar archives
-
-$ phing build - Packs all necessary files and creates a new package
-
-$ phing help - Displays the available options
-
+$ phing build   - Packs all necessary files and creates a new package
+$ phing help    - Displays the available options
+```
 
 Package structure:
 ------------------
