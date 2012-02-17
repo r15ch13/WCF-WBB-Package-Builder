@@ -72,9 +72,12 @@
 
 		<echo msg="Creating *.tar archives ..." />
 		<foreach param="foldername" absparam="absfoldername" target="buildtars">
-			<fileset dir=".">
+			<fileset dir="." defaultexcludes="true">
 				<include name="${build.source}/tar/*"/>
 				<exclude name="${build.source}/tar/*.tar"/>
+
+				<!-- exclude .gitignore -->
+				<exclude name="${build.source}/tar/.*"/>
 			</fileset>
 		</foreach>
 	</target>
@@ -85,7 +88,7 @@
 			<equals arg1="${folder.exists}" arg2="1" />
 			<then>
 				<tar destfile="${foldername}.tar" compression="none">
-					<fileset dir="${foldername}">
+					<fileset dir="${foldername}" defaultexcludes="true">
 						<include name="*" />
 					</fileset>
 				</tar>
@@ -98,7 +101,7 @@
 
 	<target name="clean" depends="load_package_data" description="Deletes previous build">
 		<delete>
-			<fileset dir=".">
+			<fileset dir="." defaultexcludes="true">
 				<include name="${build.source}/tar/*.tar" />
 			</fileset>
 		</delete>
@@ -132,7 +135,7 @@
 		<echo msg="${phing.project.name} ${script.version}" />
 		<echo msg="Building ${package.name} ..." />
 
-		<fileset dir="${build.source}" id="package">
+		<fileset dir="${build.source}" id="package" defaultexcludes="true">
 			<include name="languages/*.xml" />
 			<include name="optionals/*.tar" />
 			<include name="optionals/*.tar.gz" />
