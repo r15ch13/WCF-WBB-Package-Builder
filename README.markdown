@@ -1,15 +1,13 @@
 WCF/WBB Package Builder
-=========================
+=======================
 * This buildscript helps you creating [WCF](http://www.woltlab.com/de/) and [WBB](http://www.woltlab.com/de/) Pluginpackages.
 * Automaticly extracts the version and package name from package.xml.
 * Packs all necessary files to tar archives.
 * You must have installed and set up [phing](http://www.phing.info/).
 
 Usage
-------------------
-Copy the build.xml in your project folder. Be sure all your plugin relevant files are located under the "src" folder.
-
-Use your terminal to navigate to the directory with the build.xml and run the following commands:
+-----
+Copy the build.xml in your project folder. Be sure all your plugin relevant files are located under the "src" folder. Use your [terminal to navigate to the directory](http://code.kliu.org/cmdopen/) with the build.xml and run the following commands:
 
 ```
 $ phing clean   - Deletes previous build
@@ -42,8 +40,15 @@ Projectfolder
 `-- build.xml
 ```
 
+Phing and Windows
+-----------------
+To use this script you must have installed and set up [phing](http://www.phing.info/).
+Download the latest version and extract it.
+Now add the \bin folder of phing (e.g. D:\phing-2.4.9\bin) to your [PATH variable](http://geekswithblogs.net/renso/archive/2009/10/21/how-to-set-the-windows-path-in-windows-7.aspx).
+Open the terminal and check if 'phing --help' works.
+
 License
-----------
+-------
 Copyright 2012 Richard 'r15ch13' Kuhnt
 
 This program is free software: you can redistribute it and/or modify
