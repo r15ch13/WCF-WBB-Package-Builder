@@ -121,6 +121,7 @@
 					<equals arg1="${package.override}" arg2="yes" />
 					<then>
 						<phingcall target="clean" />
+						<phingcall target="prepare" />
 						<phingcall target="realbuild" />
 					</then>
 				</if>
