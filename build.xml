@@ -109,7 +109,7 @@
 		<delete file="${build.dir}/${package.name}_v${package.version}.tar" />
 	</target>
 
-	<target name="build" depends="load_package_data, prepare">
+	<target name="build" depends="load_package_data">
 		<available file="${build.dir}/${package.name}_v${package.version}.tar.gz" property="file.exists" value="1" />
 		<available file="${build.dir}/${package.name}_v${package.version}.tar" property="file.exists" value="1" />
 		<if>
