@@ -121,7 +121,6 @@
 					<equals arg1="${package.override}" arg2="yes" />
 					<then>
 						<phingcall target="clean" />
-						<phingcall target="prepare" />
 						<phingcall target="realbuild" />
 					</then>
 				</if>
@@ -132,7 +131,7 @@
 		</if>
 	</target>
 
-	<target name="realbuild" depends="load_package_data">
+	<target name="realbuild" depends="load_package_data, prepare">
 		<echo msg="${phing.project.name} ${script.version}" />
 		<echo msg="Building ${package.name} ..." />
 
