@@ -5,12 +5,12 @@
 * it under the terms of the GNU Lesser General Public License as published by
 * the Free Software Foundation, either version 3 of the License, or
 * (at your option) any later version.
-* 
+*
 * This program is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 * GNU Lesser General Public License for more details.
-* 
+*
 * You should have received a copy of the GNU Lesser General Public License
 * along with this program. If not, see <http://www.gnu.org/licenses/lgpl-3.0>.
 */
@@ -75,9 +75,6 @@
 			<fileset dir="." defaultexcludes="true">
 				<include name="${build.source}/tar/*"/>
 				<exclude name="${build.source}/tar/*.tar"/>
-
-				<!-- exclude .gitignore -->
-				<exclude name="${build.source}/tar/.*"/>
 			</fileset>
 		</foreach>
 	</target>
@@ -89,7 +86,6 @@
 			<then>
 				<tar destfile="${foldername}.tar" compression="none">
 					<fileset dir="${foldername}" defaultexcludes="true">
-						<include name="*" />
 					</fileset>
 				</tar>
 			</then>
@@ -177,7 +173,7 @@
 				private $file;
 				private $versionProperty;
 				private $nameProperty;
-				
+
 				public function setFile($file)
 				{
 					$this->file = $file;
@@ -196,7 +192,7 @@
 				private $content;
 
 				public function main()
-				{		
+				{
 					// check File
 					if ($this->file === null || strlen($this->file) == 0) {
 						throw new BuildException('You must specify a file containing the package information', $this->location);
