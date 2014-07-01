@@ -19,7 +19,6 @@
 		<echo msg="------------------" />
 		<echo msg="Build options" />
 		<echo msg="------------------" />
-		<echo msg="$ phing clean - Deletes previous build" />
 		<echo msg="$ phing prepare - Creates new build directory" />
 		<echo msg="$ phing init - Creates basic package structure (languages, tar, xml)" />
 		<echo msg="$ phing build - Create new package" />
@@ -90,14 +89,12 @@
 		</if>
 	</target>
 
-	<target name="clean" depends="load_package_data" description="Deletes previous build">
+	<target name="cleanup" description="Deletes previous build tar files">
 		<delete>
 			<fileset dir="." defaultexcludes="true">
 				<include name="${build.source}/tar/*.tar" />
 			</fileset>
 		</delete>
-		<delete file="${build.dir}/${package.name}_v${package.version}.tar.gz" />
-		<delete file="${build.dir}/${package.name}_v${package.version}.tar" />
 	</target>
 
 	<target name="build" depends="load_package_data">
@@ -111,7 +108,8 @@
 				<if>
 					<equals arg1="${package.override}" arg2="yes" />
 					<then>
-						<phingcall target="clean" />
+						<delete file="${build.dir}/${package.name}_v${package.version}.tar.gz" />
+						<delete file="${build.dir}/${package.name}_v${package.version}.tar" />
 						<phingcall target="realbuild" />
 					</then>
 				</if>
@@ -122,7 +120,7 @@
 		</if>
 	</target>
 
-	<target name="realbuild" depends="load_package_data, prepare">
+	<target name="realbuild" depends="load_package_data, cleanup, prepare">
 		<echo msg="${phing.project.name} ${script.version}" />
 		<echo msg="Building ${package.name} ..." />
 
