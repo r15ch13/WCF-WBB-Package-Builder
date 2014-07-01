@@ -21,6 +21,7 @@
 		<echo msg="------------------" />
 		<echo msg="$ phing clean - Deletes previous build" />
 		<echo msg="$ phing prepare - Creates new build directory" />
+		<echo msg="$ phing init - Creates basic package structure (languages, tar, xml)" />
 		<echo msg="$ phing build - Create new package" />
 		<echo msg="$ phing help - Displays the available options" />
 		<echo msg="------------------" />
@@ -50,6 +51,16 @@
 		<echo msg="${package.name}" />
 	</target>
 
+	<target name="init" description="Create basic package folder structure">
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${build.source}" />
+		<mkdir dir="${build.source}/languages" />
+		<mkdir dir="${build.source}/tar" />
+		<mkdir dir="${build.source}/tar/files" />
+		<mkdir dir="${build.source}/tar/templates" />
+		<mkdir dir="${build.source}/xml" />
+	</target>
+
 	<target name="prepare" depends="load_package_data" description="Creates new build directory and creates tar archives">
 		<echo msg="Preparing build directory ..." />
 		<mkdir dir="${build.dir}" />
@@ -57,8 +68,8 @@
 		<echo msg="Creating *.tar archives ..." />
 		<foreach param="foldername" absparam="absfoldername" target="buildtars">
 			<fileset dir="." defaultexcludes="true">
-				<include name="${build.source}/tar/*"/>
 				<exclude name="${build.source}/tar/*.tar"/>
+				<include name="${build.source}/tar/*"/>
 			</fileset>
 		</foreach>
 	</target>
