@@ -21,6 +21,7 @@
 		<echo msg="------------------" />
 		<echo msg="$ phing prepare - Creates new build directory" />
 		<echo msg="$ phing init - Creates basic package structure (languages, tar, xml)" />
+		<echo msg="$ phing update-date - Updates the package creation date" />
 		<echo msg="$ phing build - Create new package" />
 		<echo msg="$ phing help - Displays the available options" />
 		<echo msg="------------------" />
@@ -228,5 +229,41 @@
 		<packagedata file="${build.source}/package.xml" name="package.name" version="package.version" />
 		<echo msg="Extracted Version: ${package.version}" />
 		<echo msg="Extracted Packagename: ${package.name}" />
+	</target>
+
+	<target name="update-date" description="Updating the package creation date">
+		<adhoc-task name="updatedate"><![CDATA[
+			class UpdateDate extends Task
+			{
+				private $file;
+				private $content;
+
+				public function setFile($file)
+				{
+					$this->file = $file;
+				}
+
+				public function main()
+				{
+					// check File
+					if ($this->file === null || strlen($this->file) == 0) {
+						throw new BuildException('You must specify a file containing the package information', $this->location);
+					}
+					$this->content = trim(file_get_contents($this->file));
+					if (strlen($this->content) == 0) {
+						throw new BuildException(sprintf('Supplied file %s is empty', $this->file), $this->location);
+					}
+
+					$datepattern = '/\<date\>(.*)\<\/date\>/i';
+					$now = '<date><![CDATA[' . date('Y-m-d') . ']' . ']></date>';
+					$this->content = preg_replace('/\<date\>(.*)\<\/date\>/i', $now, $this->content);
+
+					file_put_contents($this->file, $this->content);
+
+					$this->log("Changed package creation date to: ".date('Y-m-d'));
+				}
+			}
+		]]></adhoc-task>
+		<updatedate file="${build.source}/package.xml" />
 	</target>
 </project>
