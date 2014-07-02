@@ -10,10 +10,11 @@ Usage
 Copy the build.xml in your project folder. Be sure all your plugin relevant files are located under the "src" folder. Use your [terminal to navigate to the directory](http://code.kliu.org/cmdopen/) with the build.xml and run the following commands:
 
 ```
-$ phing clean   - Deletes previous build
-$ phing prepare - Creates new build directory and creates tar archives
-$ phing build   - Packs all necessary files and creates a new package
-$ phing help    - Displays the available options
+$ phing prepare - Creates new build directory
+$ phing init - Creates basic package structure (languages, tar, xml)
+$ phing update-date - Updates the package creation date
+$ phing build - Create new package
+$ phing help - Displays the available options
 ```
 
 Package structure:
@@ -27,7 +28,7 @@ Projectfolder
 |   |-- languages           # Language-Files (*.xml)
 |   |-- optionals           # optional Packages (*.tar | *.tar.gz)
 |   |-- requirements        # required Packages (*.tar | *.tar.gz)
-|   |-- sql                 # SQL-Files (*.sql)  [can contain subfolders]
+|   |-- sql                 # SQL-Files (*.sql)
 |   |   |-- install.sql
 |   |   `-- update.sql
 |   |-- tar                 # All subfolders will be packed to [foldername].tar
@@ -35,7 +36,7 @@ Projectfolder
 |   |   |-- files
 |   |   |-- templates
 |   |   `-- pip
-|   |-- xml                 # Other XML-Files (*.xml) [can contain subfolders]
+|   |-- xml                 # Other XML-Files (*.xml)
 |   `-- package.xml         # Plugin package.xml
 `-- build.xml
 ```

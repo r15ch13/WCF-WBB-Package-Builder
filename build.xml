@@ -30,8 +30,8 @@
 		<echo msg="|-- build                   # The build package will be saved here ([packagename]_v[version].tar[.gz])" />
 		<echo msg="|-- src" />
 		<echo msg="|   |-- languages           # Language-Files (*.xml)" />
-		<echo msg="|   |-- optionals           # Packages (*.tar | *.tar.gz)" />
-		<echo msg="|   |-- requirements        # Packages (*.tar | *.tar.gz)" />
+		<echo msg="|   |-- optionals           # optional Packages (*.tar | *.tar.gz)" />
+		<echo msg="|   |-- requirements        # required Packages (*.tar | *.tar.gz)" />
 		<echo msg="|   |-- sql                 # SQL-Files (*.sql)" />
 		<echo msg="|   |   |-- install.sql" />
 		<echo msg="|   |   `-- update.sql" />
