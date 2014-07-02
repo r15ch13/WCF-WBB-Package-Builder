@@ -155,17 +155,12 @@
 	<!-- Loads package version and name from package.xml and saves them to package.version and package.name properties -->
 	<target name="load-package-data" description="Loads package version and name from package.xml and saves them to package.version and package.name properties">
 		<adhoc-task name="packagedata"><![CDATA[
-			/**
-			 * @author Richard 'r15ch13' Kuhnt <r15ch13@gmail.com>
-			 * @copyright Copyright (c) 2012, Richard 'r15ch13' Kuhnt
-			 * @license http://www.gnu.org/licenses/lgpl-3.0 GNU Lesser General Public License
-			 * @link http://r15ch13.de
-			 */
 			class PackageData extends Task
 			{
 				private $file;
 				private $versionProperty;
 				private $nameProperty;
+				private $content;
 
 				public function setFile($file)
 				{
@@ -181,8 +176,6 @@
 				{
 					$this->nameProperty = $property;
 				}
-
-				private $content;
 
 				public function main()
 				{
