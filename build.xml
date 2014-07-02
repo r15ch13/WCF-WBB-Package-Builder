@@ -121,7 +121,7 @@
 		</if>
 	</target>
 
-	<target name="realbuild" depends="load-package-data, cleanup, prepare">
+	<target name="realbuild" depends="load-package-data, update-date, cleanup, prepare">
 		<echo msg="${phing.project.name} ${script.version}" />
 		<echo msg="Building ${package.name} ..." />
 
