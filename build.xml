@@ -214,7 +214,10 @@
 					//$this->log($pattern);
 					if(preg_match($pattern, $this->content, $result) && count($result) == 2)
 					{
-						$data = preg_replace('/[\s]+/', '_', $result[1]);
+						$data = $result[1];
+						$data = str_replace('<![CDATA[', '', $data);
+						$data = str_replace(']'.']>', '', $data);
+						$data = preg_replace('/[\s]+/', '_', $data);
 						$data = preg_replace('/[^\w\-._]+/', '', $data);
 						$data = strtolower($data);
 						return $data;
