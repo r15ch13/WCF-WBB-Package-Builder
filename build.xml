@@ -12,7 +12,7 @@
 	<property name="build.source" value="src" />
 	<property name="build.compress" value="true" />
 
-	<property name="script.version" value="1.2.0" />
+	<property name="script.version" value="1.2.1" />
 
 	<target name="help" description="Displays the available options">
 		<echo msg="${phing.project.name} ${script.version}" />
@@ -255,7 +255,7 @@
 					}
 
 					$datepattern = '/\<date\>(.*)\<\/date\>/i';
-					$now = '<date><![CDATA[' . date('Y-m-d') . ']' . ']></date>';
+					$now = '<date>' . date('Y-m-d') . '</date>';
 					$this->content = preg_replace('/\<date\>(.*)\<\/date\>/i', $now, $this->content);
 
 					file_put_contents($this->file, $this->content);
