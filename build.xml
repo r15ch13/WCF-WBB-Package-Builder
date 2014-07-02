@@ -12,7 +12,7 @@
 	<property name="build.source" value="src" />
 	<property name="build.compress" value="true" />
 
-	<property name="script.version" value="1.1.0" />
+	<property name="script.version" value="1.2.0" />
 
 	<target name="help" description="Displays the available options">
 		<echo msg="${phing.project.name} ${script.version}" />
