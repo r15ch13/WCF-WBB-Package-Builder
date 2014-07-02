@@ -44,7 +44,7 @@
 		<echo msg="`-- build.xml" />
 	</target>
 
-	<target name="test" depends="load_package_data">
+	<target name="test" depends="load-package-data">
 		<echo msg="${phing.project.name} ${script.version}" />
 		<echo msg="${package.version}" />
 		<echo msg="${package.name}" />
@@ -60,7 +60,7 @@
 		<mkdir dir="${build.source}/xml" />
 	</target>
 
-	<target name="prepare" depends="load_package_data" description="Creates new build directory and creates tar archives">
+	<target name="prepare" depends="load-package-data" description="Creates new build directory and creates tar archives">
 		<echo msg="Preparing build directory ..." />
 		<mkdir dir="${build.dir}" />
 
@@ -97,7 +97,7 @@
 		</delete>
 	</target>
 
-	<target name="build" depends="load_package_data">
+	<target name="build" depends="load-package-data">
 		<available file="${build.dir}/${package.name}_v${package.version}.tar.gz" property="file.exists" value="1" />
 		<available file="${build.dir}/${package.name}_v${package.version}.tar" property="file.exists" value="1" />
 		<if>
@@ -120,7 +120,7 @@
 		</if>
 	</target>
 
-	<target name="realbuild" depends="load_package_data, cleanup, prepare">
+	<target name="realbuild" depends="load-package-data, cleanup, prepare">
 		<echo msg="${phing.project.name} ${script.version}" />
 		<echo msg="Building ${package.name} ..." />
 
@@ -153,7 +153,7 @@
 	</target>
 
 	<!-- Loads package version and name from package.xml and saves them to package.version and package.name properties -->
-	<target name="load_package_data" description="Loads package version and name from package.xml and saves them to package.version and package.name properties">
+	<target name="load-package-data" description="Loads package version and name from package.xml and saves them to package.version and package.name properties">
 		<adhoc-task name="packagedata"><![CDATA[
 			/**
 			 * @author Richard 'r15ch13' Kuhnt <r15ch13@gmail.com>
