@@ -12,7 +12,7 @@
 > git clone https://github.com/r15ch13/WCF-WBB-Package-Builder <your new plugin>
 > cd <your new plugin>
 > composer install
-> phing init
+> ./vendor/bin/phing init
 ```
 
 ### Use existing Plugin
