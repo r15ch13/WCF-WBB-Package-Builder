@@ -6,13 +6,12 @@
  */
 -->
 <project name="WCF/WBB Package Builder" default="help" basedir=".">
-	<!-- property file="build.properties" /-->
-
-	<property name="build.dir" value="build" />
+	<property file="default.properties" />
+	<property name="build.dir" value="dist" />
 	<property name="build.source" value="src" />
 	<property name="build.compress" value="true" />
-
-	<property name="script.version" value="1.2.1" />
+	<property name="package.xml" value="${build.source}/package.xml" />
+	<property name="script.version" value="2.0.0" />
 
 	<target name="help" description="Displays the available options">
 		<echo msg="${phing.project.name} ${script.version}" />
@@ -20,14 +19,14 @@
 		<echo msg="Build options" />
 		<echo msg="------------------" />
 		<echo msg="$ phing prepare - Creates new build directory" />
-		<echo msg="$ phing init - Creates basic package structure (languages, tar, xml)" />
+		<echo msg="$ phing init - Creates basic package structure (languages, tar, xml) and package.xml" />
 		<echo msg="$ phing update-date - Updates the package creation date" />
 		<echo msg="$ phing build - Create new package" />
 		<echo msg="$ phing help - Displays the available options" />
 		<echo msg="------------------" />
 		<echo msg="Package structure:" />
 		<echo msg="Projectfolder" />
-		<echo msg="|-- build                   # The build package will be saved here ([packagename]_v[version].tar[.gz])" />
+		<echo msg="|-- dist                    # The build package will be saved here ([packagename]_v[version].tar[.gz])" />
 		<echo msg="|-- src" />
 		<echo msg="|   |-- languages           # Language-Files (*.xml)" />
 		<echo msg="|   |-- optionals           # optional Packages (*.tar | *.tar.gz)" />
@@ -59,6 +58,26 @@
 		<mkdir dir="${build.source}/tar/files" />
 		<mkdir dir="${build.source}/tar/templates" />
 		<mkdir dir="${build.source}/xml" />
+
+		<available file="${package.xml}" property="package.exists" value="1" />
+		<if>
+			<equals arg1="${package.exists}" arg2="1" />
+			<then>
+				<echo msg="package.xml already exists" />
+			</then>
+			<else>
+				<echo msg="Creating template package.xml" />
+				<input propertyname="init.name" defaultvalue="com.example.packagename">Enter package name</input>
+				<php expression="chr(10)" returnProperty="LF" />
+				<php expression="chr(9)" returnProperty="TAB" />
+				<echo file="${package.xml}" append="false">${package.template}</echo>
+				<replaceregexp file="${package.xml}" match="\\n" replace="${LF}" />
+				<replaceregexp file="${package.xml}" match="\\t" replace="${TAB}" />
+				<replaceregexp file="${package.xml}" match="(com.example.packagename)" replace="${init.name}" />
+				<phingcall target="update-version" />
+				<phingcall target="update-date" />
+			</else>
+		</if>
 	</target>
 
 	<target name="prepare" depends="load-package-data" description="Creates new build directory and creates tar archives">
@@ -155,115 +174,31 @@
 
 	<!-- Loads package version and name from package.xml and saves them to package.version and package.name properties -->
 	<target name="load-package-data" description="Loads package version and name from package.xml and saves them to package.version and package.name properties">
-		<adhoc-task name="packagedata"><![CDATA[
-			class PackageData extends Task
-			{
-				private $file;
-				private $versionProperty;
-				private $nameProperty;
-				private $content;
-
-				public function setFile($file)
-				{
-					$this->file = $file;
-				}
-
-				public function setVersion($property)
-				{
-					$this->versionProperty = $property;
-				}
-
-				public function setName($property)
-				{
-					$this->nameProperty = $property;
-				}
-
-				public function main()
-				{
-					// check File
-					if ($this->file === null || strlen($this->file) == 0) {
-						throw new BuildException('You must specify a file containing the package information', $this->location);
-					}
-					$this->content = trim(file_get_contents($this->file));
-					if (strlen($this->content) == 0) {
-						throw new BuildException(sprintf('Supplied file %s is empty', $this->file), $this->location);
-					}
-					if (is_null($this->versionProperty) || strlen($this->versionProperty) === 0) {
-						throw new BuildException('Property for publishing package version is not set', $this->location);
-					}
-					if (is_null($this->nameProperty) || strlen($this->nameProperty) === 0) {
-						throw new BuildException('Property for publishing package name is not set', $this->location);
-					}
-
-					$versionpattern = '/\<version\>(.*)\<\/version\>/i';
-					$namepattern = '/name\="([a-zA-Z0-9\-._]+)".*\>/i';
-
-					$this->project->setProperty($this->versionProperty, $this->usePattern($versionpattern));
-					$this->project->setProperty($this->nameProperty, $this->usePattern($namepattern));
-				}
-
-				public function usePattern($pattern)
-				{
-					$result = array();
-					//$this->log($pattern);
-					if(preg_match($pattern, $this->content, $result) && count($result) == 2)
-					{
-						$data = $result[1];
-						$data = str_replace('<![CDATA[', '', $data);
-						$data = str_replace(']'.']>', '', $data);
-						$data = preg_replace('/[\s]+/', '_', $data);
-						$data = preg_replace('/[^\w\-._]+/', '', $data);
-						$data = strtolower($data);
-						return $data;
-					}
-					else
-					{
-						$this->log("Pattern: ".$pattern);
-						$this->log("Result: ".print_r($result, true));
-						throw new BuildException(sprintf('Result is not matching the regex pattern: %s', $this->file), $this->location);
-					}
-					return "";
-				}
-			}
-		]]></adhoc-task>
-		<packagedata file="${build.source}/package.xml" name="package.name" version="package.version" />
+		<loadfile property="package.content" file="${package.xml}" />
+		<propertyregex property="package.version" subject="${package.content}" pattern="${pattern.version}" match="$1" casesensitive="false" defaultvalue="0.0.1" />
+		<propertyregex property="package.name" subject="${package.content}" pattern="${pattern.name}" match="$1" casesensitive="false" defaultvalue="CHANGEME" />
 		<echo msg="Extracted Version: ${package.version}" />
 		<echo msg="Extracted Packagename: ${package.name}" />
 	</target>
 
 	<target name="update-date" description="Updating the package creation date">
-		<adhoc-task name="updatedate"><![CDATA[
-			class UpdateDate extends Task
-			{
-				private $file;
-				private $content;
+		<tstamp>
+			<format property="date" pattern="%Y-%m-%d" />
+		</tstamp>
+		<replaceregexp file="${package.xml}" match="${pattern.date}" replace="&lt;date&gt;${date}&lt;/date&gt;" byline="true" />
+	</target>
 
-				public function setFile($file)
-				{
-					$this->file = $file;
-				}
-
-				public function main()
-				{
-					// check File
-					if ($this->file === null || strlen($this->file) == 0) {
-						throw new BuildException('You must specify a file containing the package information', $this->location);
-					}
-					$this->content = trim(file_get_contents($this->file));
-					if (strlen($this->content) == 0) {
-						throw new BuildException(sprintf('Supplied file %s is empty', $this->file), $this->location);
-					}
-
-					$datepattern = '/\<date\>(.*)\<\/date\>/i';
-					$now = '<date>' . date('Y-m-d') . '</date>';
-					$this->content = preg_replace('/\<date\>(.*)\<\/date\>/i', $now, $this->content);
-
-					file_put_contents($this->file, $this->content);
-
-					$this->log("Changed package creation date to: ".date('Y-m-d'));
-				}
-			}
-		]]></adhoc-task>
-		<updatedate file="${build.source}/package.xml" />
+	<target name="update-version" depends="load-package-data" description="Updating the package version">
+		<input propertyname="package.newversion" defaultvalue="${package.version}">Enter package version</input>
+		<if>
+			<equals arg1="${package.newversion}" arg2="${package.version}" />
+			<then>
+				<echo msg="Version has not been changed." />
+			</then>
+			<else>
+				<echo msg="Changing version from v${package.version} to v${package.newversion}." />
+				<replaceregexp file="${package.xml}" match="${pattern.version}" replace="&lt;version&gt;${package.newversion}&lt;/version&gt;" byline="true" />
+			</else>
+		</if>
 	</target>
 </project>

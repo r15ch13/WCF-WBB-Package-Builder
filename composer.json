@@ -1,0 +1,10 @@
+{
+    "require": {
+        "phing/phing": "2.*",
+        "pear/archive_tar": "^1.4"
+    },
+    "scripts": {
+        "build": "phing build",
+        "buildWin": ".\\vendor\\bin\\phing.bat build"
+    }
+}
