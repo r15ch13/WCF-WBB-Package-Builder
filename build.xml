@@ -21,6 +21,7 @@
 		<echo msg="$ phing prepare - Creates new build directory" />
 		<echo msg="$ phing init - Creates basic package structure (languages, tar, xml) and package.xml" />
 		<echo msg="$ phing update-date - Updates the package creation date" />
+		<echo msg="$ phing update-version - Updates the package version" />
 		<echo msg="$ phing build - Create new package" />
 		<echo msg="$ phing help - Displays the available options" />
 		<echo msg="------------------" />

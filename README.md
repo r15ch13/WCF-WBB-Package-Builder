@@ -23,6 +23,7 @@ Copy your plugin sources into the `src` folder and match it up to the [package s
 $ phing prepare - Creates new build directory
 $ phing init - Creates basic package structure (languages, tar, xml) and package.xml
 $ phing update-date - Updates the package creation date
+$ phing update-version - Updates the package version
 $ phing build - Create new package
 $ phing help - Displays the available options
 ```
