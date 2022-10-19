@@ -19,7 +19,7 @@
 		<echo msg="Build options" />
 		<echo msg="------------------" />
 		<echo msg="$ phing prepare - Creates new build directory" />
-		<echo msg="$ phing init - Creates basic package structure (languages, tar, xml) and package.xml" />
+		<echo msg="$ phing init - Creates basic package structure (language, tar, xml) and package.xml" />
 		<echo msg="$ phing update-date - Updates the package creation date" />
 		<echo msg="$ phing update-version - Updates the package version" />
 		<echo msg="$ phing build - Create new package" />
@@ -29,7 +29,7 @@
 		<echo msg="Projectfolder" />
 		<echo msg="|-- dist                    # The build package will be saved here ([packagename]_v[version].tar[.gz])" />
 		<echo msg="|-- src" />
-		<echo msg="|   |-- languages           # Language-Files (*.xml)" />
+		<echo msg="|   |-- language            # Language-Files (*.xml)" />
 		<echo msg="|   |-- optionals           # optional Packages (*.tar | *.tar.gz)" />
 		<echo msg="|   |-- requirements        # required Packages (*.tar | *.tar.gz)" />
 		<echo msg="|   |-- sql                 # SQL-Files (*.sql)" />
@@ -54,7 +54,7 @@
 	<target name="init" description="Create basic package folder structure">
 		<mkdir dir="${build.dir}" />
 		<mkdir dir="${build.source}" />
-		<mkdir dir="${build.source}/languages" />
+		<mkdir dir="${build.source}/language" />
 		<mkdir dir="${build.source}/tar" />
 		<mkdir dir="${build.source}/tar/files" />
 		<mkdir dir="${build.source}/tar/templates" />
@@ -146,7 +146,7 @@
 		<echo msg="Building ${package.name} ..." />
 
 		<fileset dir="${build.source}" id="package" defaultexcludes="true">
-			<include name="languages/*.xml" />
+			<include name="language/*.xml" />
 			<include name="optionals/*.tar" />
 			<include name="optionals/*.tar.gz" />
 			<include name="requirements/*.tar" />
