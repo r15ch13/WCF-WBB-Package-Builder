@@ -2,7 +2,7 @@
 <!--
 /**
  * @author Richard Kuhnt
- * @license MIT License (http://r15ch13.mit-license.org/)
+ * @license MIT License (https://r15ch13.mit-license.org/)
  */
 -->
 <project name="WCF/WBB Package Builder" default="help" basedir=".">
@@ -11,7 +11,7 @@
 	<property name="build.source" value="src" />
 	<property name="build.compress" value="true" />
 	<property name="package.xml" value="${build.source}/package.xml" />
-	<property name="script.version" value="2.0.0" />
+	<property name="script.version" value="2.0.1" />
 
 	<target name="help" description="Displays the available options">
 		<echo msg="${phing.project.name} ${script.version}" />
@@ -125,9 +125,9 @@
 			<equals arg1="${file.exists}" arg2="1" />
 			<then>
 				<echo msg="Package with version ${package.version} already exists!" />
-				<input propertyname="package.override" validargs="yes,no" defaultvalue="no">Do you want to override it? </input>
+				<input propertyname="package.override" validargs="y,n" defaultvalue="n">Do you want to override it? </input>
 				<if>
-					<equals arg1="${package.override}" arg2="yes" />
+					<equals arg1="${package.override}" arg2="y" />
 					<then>
 						<delete file="${build.dir}/${package.name}_v${package.version}.tar.gz" />
 						<delete file="${build.dir}/${package.name}_v${package.version}.tar" />
